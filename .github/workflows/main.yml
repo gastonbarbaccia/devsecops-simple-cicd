@@ -15,6 +15,10 @@ on:
     branches:
       - main
 
+env:
+  SONAR_TOKEN: 3460a17c07aa8900bef217b2a98a47a3aa10e53f
+  GITHUB_TOKEN: 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 
+
 jobs:
   copy_paste_detector:
     name: Copy Paste Detector
@@ -56,8 +60,8 @@ jobs:
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
   #        with:
   #          projectBaseDir: my-custom-directory
   #           args: >
