@@ -23,7 +23,7 @@ jobs:
       - name: PHP Syntax Checker (Lint)
         uses: StephaneBour/actions-php-lint@7.4
         with:
-          dir: '.'
+          dir: './'
 
   sonarcloud:
       name: Sonarcloud
