@@ -1,0 +1,104 @@
+name: DevSecOps Pipeline
+
+# Crear las siguientes variables como secrets dentro del settings del proyecto
+# GITHUB_TOKEN es un token de github que se puede crear con otro nombre de ser necesario, recordar colocar el nombre en el main.yml
+# SONAR_TOKEN es un token que se genera en sonarcloud
+# HEROKU_API_KEY es un token que se debera generar en heroku en la seccion profile
+
+on:
+  push:
+    branches: 
+      - main
+      - develop
+
+  pull_request:
+    branches: 
+      - main
+
+jobs:
+  PHP_Lint:
+      name: PHP Lint
+      runs-on: ubuntu-latest
+      - name: PHP Syntax Checker (Lint)
+        uses: StephaneBour/actions-php-lint@7.4
+        with:
+          dir: '.'
+
+  sonarcloud:
+      name: Sonarcloud
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        with:
+#          projectBaseDir: my-custom-directory
+#           args: >
+#              -Dsonar.organization=my-organization
+#              -Dsonar.projectKey=my-projectkey
+#              -Dsonar.python.coverage.reportPaths=coverage.xml
+#              -Dsonar.sources=lib/
+#              -Dsonar.test.exclusions=tests/**
+#              -Dsonar.tests=tests/
+#              -Dsonar.verbose=true
+            
+  dependency_check:
+    name: Dependency check Scan
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Depcheck
+        uses: dependency-check/Dependency-Check_Action@main
+        id: Depcheck
+        with:
+          project: 'test'
+          path: '.'
+          format: 'HTML'    
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
+        with:
+           name: Depcheck report
+           path: ${{github.workspace}}/reports  
+
+
+  Deploy_Staging:
+    name: Deploy Staging
+    if: ${{ false }}
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: 
+      name: 'Staging'
+      url: # Colocar la url Ej. 'https://test.herokuapp.com' si se da de alta la web en heroku
+    needs: [sonarcloud,dependency_check,PHP_Lint]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}} # Es la API que se debera crear en heroku en la seccion profile
+          heroku_app_name: "tp1-crud-master-staging" # Nombre de la aplicacion tal cual esta en heroku
+          heroku_email: "gastonbarbaccia@hotmail.com" # Email que registramos en heroku para poder recibir las alertas
+
+
+  Deploy_Production:
+    name: Deploy Production
+    if: ${{ false }}
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: 
+      name: 'Production'
+      url: # Colocar la url Ej. 'https://test.herokuapp.com' si se da de alta la web en heroku
+    needs: [SonarScanner,dependency_check,PHP_Lint]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}} # Es la API que se debera crear en heroku en la seccion profile
+          heroku_app_name: "tp1-crud-master-prod" # Nombre de la aplicacion tal cual esta en heroku
+          heroku_email: "gastonbarbaccia@hotmail.com" # Email que registramos en heroku para poder recibir las alertas
