@@ -19,6 +19,8 @@ jobs:
   copy_paste_detector:
       name: Copy Paste Detector
       runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
       - name: PHP Copy Paste Detector
         uses: StephaneBour/actions-php-cpd@1.0
         with:
@@ -29,6 +31,7 @@ jobs:
       name: PHP Lint
       runs-on: ubuntu-latest
       steps:
+      - uses: actions/checkout@v2
       - name: PHP Syntax Checker (Lint)
         uses: StephaneBour/actions-php-lint@7.4
         with:
