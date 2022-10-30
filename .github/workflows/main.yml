@@ -16,14 +16,13 @@ on:
       - main
 
 jobs:
-  phpstan:
-    name: PHP Stan
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: php-actions/phpstan@v3
-      with:
-        path: .
+  copy_paste_detector:
+      name: Copy Paste Detector
+      runs-on: ubuntu-latest
+      - name: PHP Copy Paste Detector
+        uses: StephaneBour/actions-php-cpd@1.0
+        with:
+          dir: '.'
 
 
   php_lint:
@@ -33,7 +32,7 @@ jobs:
       - name: PHP Syntax Checker (Lint)
         uses: StephaneBour/actions-php-lint@7.4
         with:
-          dir: './'
+          dir: '.'
 
   sonarcloud:
       name: Sonarcloud
@@ -87,7 +86,7 @@ jobs:
     environment: 
       name: 'Staging'
       url: # Colocar la url Ej. 'https://test.herokuapp.com' si se da de alta la web en heroku
-    needs: [sonarcloud,dependency_check,PHP_Lint,phpstan]
+    needs: [sonarcloud,dependency_check,PHP_Lint,copy_paste_detector]
     steps:
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12
@@ -105,7 +104,7 @@ jobs:
     environment: 
       name: 'Production'
       url: # Colocar la url Ej. 'https://test.herokuapp.com' si se da de alta la web en heroku
-    needs: [sonarcloud,dependency_check,PHP_Lint,phpstan]
+    needs: [sonarcloud,dependency_check,PHP_Lint,copy_paste_detector]
     steps:
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12
