@@ -16,9 +16,10 @@ on:
       - main
 
 jobs:
-  PHP_Lint:
+  php_lint:
       name: PHP Lint
       runs-on: ubuntu-latest
+      steps:
       - name: PHP Syntax Checker (Lint)
         uses: StephaneBour/actions-php-lint@7.4
         with:
