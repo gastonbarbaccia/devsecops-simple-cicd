@@ -72,7 +72,7 @@ jobs:
   Deploy_Staging:
     name: Deploy Staging
     if: ${{ false }}
-    if: github.ref == 'refs/heads/develop'
+#    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     environment: 
       name: 'Staging'
@@ -90,7 +90,7 @@ jobs:
   Deploy_Production:
     name: Deploy Production
     if: ${{ false }}
-    if: github.ref == 'refs/heads/main'
+#    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: 
       name: 'Production'
