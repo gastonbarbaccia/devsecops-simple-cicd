@@ -95,7 +95,7 @@ jobs:
     environment: 
       name: 'Production'
       url: # Colocar la url Ej. 'https://test.herokuapp.com' si se da de alta la web en heroku
-    needs: [SonarScanner,dependency_check,PHP_Lint]
+    needs: [sonarcloud,dependency_check,PHP_Lint]
     steps:
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12
