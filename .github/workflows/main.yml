@@ -7,50 +7,49 @@ name: DevSecOps Pipeline
 
 on:
   push:
-    branches: 
+    branches:
       - main
       - develop
 
   pull_request:
-    branches: 
+    branches:
       - main
 
 jobs:
   copy_paste_detector:
-      name: Copy Paste Detector
-      runs-on: ubuntu-latest
-      steps:
+    name: Copy Paste Detector
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v2
       - name: PHP Copy Paste Detector
         uses: StephaneBour/actions-php-cpd@1.0
         with:
-          dir: '.'
+          dir: "."
 
   phpstan:
     name: PHP Stan
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: php-actions/phpstan@v3
-      with:
-        path: '.'
-
+      - uses: actions/checkout@v2
+      - uses: php-actions/phpstan@v3
+        with:
+          path: "."
 
   php_lint:
-      name: PHP Lint
-      runs-on: ubuntu-latest
-      steps:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v2
       - name: PHP Syntax Checker (Lint)
         uses: StephaneBour/actions-php-lint@7.4
         with:
-          dir: '.'
+          dir: "."
 
   sonarcloud:
-      name: Sonarcloud
-      runs-on: ubuntu-latest
-      needs: [copy_paste_detector,phpstan,php_lint]
-      steps:
+    name: Sonarcloud
+    runs-on: ubuntu-latest
+    needs: [copy_paste_detector, phpstan, php_lint]
+    steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -59,21 +58,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#        with:
-#          projectBaseDir: my-custom-directory
-#           args: >
-#              -Dsonar.organization=my-organization
-#              -Dsonar.projectKey=my-projectkey
-#              -Dsonar.python.coverage.reportPaths=coverage.xml
-#              -Dsonar.sources=lib/
-#              -Dsonar.test.exclusions=tests/**
-#              -Dsonar.tests=tests/
-#              -Dsonar.verbose=true
-            
+  #        with:
+  #          projectBaseDir: my-custom-directory
+  #           args: >
+  #              -Dsonar.organization=my-organization
+  #              -Dsonar.projectKey=my-projectkey
+  #              -Dsonar.python.coverage.reportPaths=coverage.xml
+  #              -Dsonar.sources=lib/
+  #              -Dsonar.test.exclusions=tests/**
+  #              -Dsonar.tests=tests/
+  #              -Dsonar.verbose=true
+
   dependency_check:
     name: Dependency check Scan
     runs-on: ubuntu-latest
-    needs: [copy_paste_detector,phpstan,php_lint]
+    needs: [copy_paste_detector, phpstan, php_lint]
     continue-on-error: true
     steps:
       - name: Checkout
@@ -82,25 +81,24 @@ jobs:
         uses: dependency-check/Dependency-Check_Action@main
         id: Depcheck
         with:
-          project: 'test'
-          path: '.'
-          format: 'HTML'    
+          project: "test"
+          path: "."
+          format: "HTML"
       - name: Upload Test results
         uses: actions/upload-artifact@master
         with:
-           name: Depcheck report
-           path: ${{github.workspace}}/reports  
-
+          name: Depcheck report
+          path: ${{github.workspace}}/reports
 
   Deploy_Staging:
     name: Deploy Staging
     if: ${{ false }}
-#    if: github.ref == 'refs/heads/develop'
+    #    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
-    environment: 
-      name: 'Staging'
+    environment:
+      name: "Staging"
       url: # Colocar la url Ej. 'https://test.herokuapp.com' si se da de alta la web en heroku
-    needs: [sonarcloud,dependency_check]
+    needs: [sonarcloud, dependency_check]
     steps:
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12
@@ -109,16 +107,15 @@ jobs:
           heroku_app_name: "tp1-crud-master-staging" # Nombre de la aplicacion tal cual esta en heroku
           heroku_email: "gastonbarbaccia@hotmail.com" # Email que registramos en heroku para poder recibir las alertas
 
-
   Deploy_Production:
     name: Deploy Production
     if: ${{ false }}
-#    if: github.ref == 'refs/heads/main'
+    #    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    environment: 
-      name: 'Production'
+    environment:
+      name: "Production"
       url: # Colocar la url Ej. 'https://test.herokuapp.com' si se da de alta la web en heroku
-    needs: [sonarcloud,dependency_check]
+    needs: [sonarcloud, dependency_check]
     steps:
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12
