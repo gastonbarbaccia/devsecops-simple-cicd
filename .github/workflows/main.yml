@@ -45,7 +45,7 @@ jobs:
             echo "command: ${{ steps.gitleaks.outputs.command }}"
             echo "report: ${{ steps.gitleaks.outputs.report }}"
         - name: Upload SARIF report
-          if: steps.gitleaks.outputs.exitcode == 1
+#          if: steps.gitleaks.outputs.exitcode == 1
           uses: github/codeql-action/upload-sarif@v2
           with:
             sarif_file: ${{ steps.gitleaks.outputs.report }}  
