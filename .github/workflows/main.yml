@@ -16,6 +16,10 @@ on:
     branches:
       - main
 
+env:
+  GITHUB_TOKEN: Hsd91jdsa91a01jd01231jasdhaf
+
+
 jobs:
   gitleaks:
       name: Gitleaks
