@@ -24,6 +24,7 @@ jobs:
   gitleaks:
       name: gitleaks
       runs-on: ubuntu-latest
+      if: ${{ false }}
       steps:
         - name: Checkout
           uses: actions/checkout@v3
