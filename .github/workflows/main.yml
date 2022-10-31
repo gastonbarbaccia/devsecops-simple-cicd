@@ -17,7 +17,7 @@ on:
       - main
 
 env:
-  GITHUB_TOKEN: Hsd91jdsa91a01jd01231jasdhaf
+  GITHUB_TOKEN: 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
 
 
 jobs:
