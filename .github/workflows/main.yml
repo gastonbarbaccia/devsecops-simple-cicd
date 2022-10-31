@@ -22,7 +22,7 @@ env:
 
 jobs:
   gitleaks:
-      name: gitleaks
+      name: Gitleaks
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
