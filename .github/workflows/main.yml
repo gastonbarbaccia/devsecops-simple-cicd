@@ -16,8 +16,8 @@ on:
     branches:
       - main
 
-env:
-  GITHUB_TOKEN: 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
+#env:
+#  GITHUB_TOKEN: ghp_HHF5LV0QqbLUFXSV3ludOfVHVBTzrw29c8H1
 
 
 jobs:
